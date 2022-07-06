@@ -1,0 +1,13 @@
+.input {
+  margin-left: 15px;
+}
+
+.item {
+  display: flex;
+
+  margin-top: 15px;
+}
+
+.btn {
+  margin-left: 15px;
+}
