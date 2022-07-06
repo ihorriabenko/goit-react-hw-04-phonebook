@@ -1,51 +1,39 @@
 import { nanoid } from 'nanoid';
-import { Component } from 'react';
+// import { Component } from 'react';
+import { useState } from 'react';
 
 import Section from 'components/Section';
 import Form from './components/Form';
 import Users from './components/Users';
 
-class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const [filter, setFilter] = useState('');
+
+  const addUser = ({ name, number }) => {
+    const newUser = {
+      name,
+      number,
+      id: nanoid(),
+    };
+
+    setUsers(prevUsers => [...prevUsers, newUser]);
   };
 
-  addUser = ({ name, number }) => {
-    const { contacts } = this.state;
-
-    if (contacts.find(el => el.name === name)) {
-      alert(`${name} is already in contacts`);
-    } else {
-      this.setState(({ contacts }) => {
-        const user = {
-          name,
-          number,
-          id: nanoid(),
-        };
-        return {
-          contacts: [...contacts, user],
-        };
-      });
-    }
+  const removeUser = id => {
+    setUsers(prevUsers => prevUsers.filter(item => item.id !== id));
   };
 
-  removeUser = (id) => {
-    this.setState(({ contacts }) => {
-        return {
-            contacts: contacts.filter(item => item.id !== id)
-        }
-    })
-}
+  const handleFilter = ({ target }) => {
+    setFilter(target.value);
+  };
 
-  getFilteredUsers = () => {
-    const { filter, contacts } = this.state;
-
+  const getFilteredUsers = () => {
     if (!filter) {
-      return contacts;
+      return users;
     }
     const filterValue = filter.toLowerCase();
-    const filteredUsers = contacts.filter(({ name }) => {
+    const filteredUsers = users.filter(({ name }) => {
       const nameValue = name.toLowerCase();
       return nameValue.includes(filterValue);
     });
@@ -53,25 +41,89 @@ class App extends Component {
     return filteredUsers;
   };
 
-  handleFilter = ({ target }) => {
-    this.setState({
-      filter: target.value,
-    });
-  };
+  return (
+    <div>
+      <Section title={'Phonebook'}>
+        <Form onSubmit={addUser} />
+      </Section>
+      <Section title={'Contancts'}>
+        <Users
+          removeUser={removeUser}
+          getFilteredUsers={getFilteredUsers()}
+          handleFilter={handleFilter}
+        />
+      </Section>
+    </div>
+  );
+};
 
-  render() {
-    return (
-      <div>
-        <Section title={'Phonebook'}>
-          <Form onSubmit={this.addUser} />
-        </Section>
-        <Section title={'Contancts'}>
+// class App extends Component {
+//   state = {
+//     contacts: [],
+//     filter: '',
+//   };
 
-          <Users removeUser={this.removeUser} getFilteredUsers={this.getFilteredUsers()} handleFilter={this.handleFilter} />
-        </Section>
-      </div>
-    );
-  }
-}
+//   addUser = ({ name, number }) => {
+//     const { contacts } = this.state;
+
+//     if (contacts.find(el => el.name === name)) {
+//       alert(`${name} is already in contacts`);
+//     } else {
+//       this.setState(({ contacts }) => {
+//         const user = {
+//           name,
+//           number,
+//           id: nanoid(),
+//         };
+//         return {
+//           contacts: [...contacts, user],
+//         };
+//       });
+//     }
+//   };
+
+//   removeUser = (id) => {
+//     this.setState(({ contacts }) => {
+//         return {
+//             contacts: contacts.filter(item => item.id !== id)
+//         }
+//     })
+// }
+
+//   getFilteredUsers = () => {
+//     const { filter, contacts } = this.state;
+
+// if (!filter) {
+//   return contacts;
+// }
+// const filterValue = filter.toLowerCase();
+// const filteredUsers = contacts.filter(({ name }) => {
+//   const nameValue = name.toLowerCase();
+//   return nameValue.includes(filterValue);
+// });
+
+// return filteredUsers;
+//   };
+
+//   handleFilter = ({ target }) => {
+//     this.setState({
+//       filter: target.value,
+//     });
+//   };
+
+//   render() {
+//     return (
+//       <div>
+//         <Section title={'Phonebook'}>
+//           <Form onSubmit={this.addUser} />
+//         </Section>
+//         <Section title={'Contancts'}>
+
+//           <Users removeUser={this.removeUser} getFilteredUsers={this.getFilteredUsers()} handleFilter={this.handleFilter} />
+//         </Section>
+//       </div>
+//     );
+//   }
+// }
 
 export default App;
